@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADN & Rendimiento Deportivo — Caso Haaland</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===========================
+       CSS VARIABLES & RESET
+    =========================== */
+    :root {
+      --bg:        #090c12;
+      --surface:   #0f1520;
+      --card:      #141c2b;
+      --border:    #1e2d44;
+      --accent-g:  #00e676;   /* verde biología */
+      --accent-b:  #00b0ff;   /* azul ciencia */
+      --accent-y:  #ffd600;   /* amarillo gol */
+      --accent-r:  #ff5252;   /* rojo energía */
+      --dna-a:     #ff7043;
+      --dna-t:     #42a5f5;
+      --dna-c:     #ab47bc;
+      --dna-g:     #66bb6a;
+      --rna-a:     #ff7043;
+      --rna-u:     #ffca28;
+      --rna-c:     #ab47bc;
+      --rna-g:     #66bb6a;
+      --text:      #e8f0fe;
+      --muted:     #607d8b;
+      --font-disp: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Fondo animado: red de células */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,230,118,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(0,176,255,.07) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ===========================
+       HEADER
+    =========================== */
+    header {
+      position: relative; z-index: 1;
+      padding: 2.5rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem;
+    }
+
+    .header-badge {
+      background: linear-gradient(135deg, var(--accent-g), var(--accent-b));
+      color: #000; font-family: var(--font-mono); font-size: .65rem; font-weight: 700;
+      padding: .3rem .8rem; border-radius: 2px; letter-spacing: .1em; text-transform: uppercase;
+    }
+
+    .header-titles { flex: 1; }
+
+    header h1 {
+      font-family: var(--font-disp);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      letter-spacing: .04em; line-height: 1;
+      background: linear-gradient(90deg, var(--accent-g) 0%, var(--accent-b) 60%, var(--accent-y) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p.subtitle {
+      font-size: .95rem; color: var(--muted); margin-top: .4rem; font-style: italic;
+    }
+
+    .haaland-chip {
+      display: flex; align-items: center; gap: .6rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 40px; padding: .5rem 1rem;
+    }
+
+    .haaland-chip .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent-y); box-shadow: 0 0 8px var(--accent-y);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    .haaland-chip span { font-size: .85rem; font-weight: 600; }
+
+    /* ===========================
+       LAYOUT PRINCIPAL
+    =========================== */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      display: flex; flex-direction: column; gap: 2.5rem;
+    }
+
+    /* ===========================
+       INTRO CARD
+    =========================== */
+    .intro-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem 2rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    }
+
+    @media (max-width: 640px) { .intro-card { grid-template-columns: 1fr; } }
+
+    .intro-card h2 {
+      font-family: var(--font-disp); font-size: 1.4rem; letter-spacing: .06em;
+      color: var(--accent-g); margin-bottom: .6rem;
+    }
+
+    .intro-card p { font-size: .9rem; color: #a0b4c8; line-height: 1.7; }
+
+    .gene-info {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.2rem;
+    }
+
+    .gene-info .label {
+      font-family: var(--font-mono); font-size: .65rem;
+      color: var(--accent-b); letter-spacing: .12em; text-transform: uppercase; margin-bottom: .5rem;
+    }
+
+    .gene-info .sequence {
+      font-family: var(--font-mono); font-size: .8rem; line-height: 1.9;
+      word-break: break-all; color: #cdd9e5;
+    }
+
+    /* colores por base */
+    .b-A { color: var(--dna-a); }
+    .b-T { color: var(--dna-t); }
+    .b-C { color: var(--dna-c); }
+    .b-G { color: var(--dna-g); }
+    .b-U { color: var(--rna-u); }
+
+    /* ===========================
+       SECCIÓN TRANSCRIPCIÓN
+    =========================== */
+    .section-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.2rem 1.8rem; border-bottom: 1px solid var(--border);
+    }
+
+    .step-badge {
+      font-family: var(--font-disp); font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--accent-g), var(--accent-b));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1;
+    }
+
+    .section-header h2 { font-family: var(--font-disp); font-size: 1.5rem; letter-spacing: .06em; }
+
+    .section-header p { font-size: .82rem; color: var(--muted); }
+
+    .section-body { padding: 1.8rem; }
+
+    /* ===========================
+       CADENA ADN
+    =========================== */
+    .dna-container {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.2rem;
+      overflow-x: auto; margin-bottom: 1.4rem;
+    }
+
+    .dna-strand-label {
+      font-family: var(--font-mono); font-size: .65rem;
+      color: var(--muted); letter-spacing: .1em; margin-bottom: .4rem;
+    }
+
+    .strand {
+      display: flex; gap: 4px; flex-wrap: nowrap;
+      margin-bottom: 6px;
+    }
+
+    .strand .base {
+      width: 28px; height: 28px;
+      border-radius: 5px; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: .75rem; font-weight: 700;
+      transition: transform .3s, box-shadow .3s;
+      flex-shrink: 0;
+    }
+
+    .strand .base.A { background: rgba(255,112,67,.18); color: var(--dna-a); border: 1px solid rgba(255,112,67,.4); }
+    .strand .base.T { background: rgba(66,165,245,.18); color: var(--dna-t); border: 1px solid rgba(66,165,245,.4); }
+    .strand .base.C { background: rgba(171,71,188,.18); color: var(--dna-c); border: 1px solid rgba(171,71,188,.4); }
+    .strand .base.G { background: rgba(102,187,106,.18); color: var(--dna-g); border: 1px solid rgba(102,187,106,.4); }
+    .strand .base.U { background: rgba(255,202,40,.18); color: var(--rna-u); border: 1px solid rgba(255,202,40,.4); }
+
+    .strand .base.highlight {
+      transform: scale(1.25);
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    /* línea de enlaces de hidrógeno */
+    .bonds {
+      display: flex; gap: 4px; margin-bottom: 6px; align-items: center;
+    }
+
+    .bonds .bond {
+      width: 28px; text-align: center;
+      font-size: .6rem; color: var(--muted); flex-shrink: 0;
+      transition: color .3s;
+    }
+
+    .bonds .bond.active { color: var(--accent-g); }
+
+    /* ARNm en construcción */
+    #mrna-track {
+      display: flex; gap: 4px; flex-wrap: nowrap; min-height: 34px;
+      align-items: center; margin-top: 8px;
+    }
+
+    #mrna-track .base { opacity: 0; animation: none; }
+    #mrna-track .base.appear { animation: baseAppear .35s forwards; }
+
+    @keyframes baseAppear {
+      from { opacity: 0; transform: translateY(-12px) scale(.7); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Polimerasa */
+    #polymerase {
+      display: none; position: relative;
+      background: linear-gradient(135deg, #1a2a1a, #0d2010);
+      border: 2px solid var(--accent-g);
+      border-radius: 8px; padding: .5rem .9rem;
+      font-family: var(--font-mono); font-size: .7rem; color: var(--accent-g);
+      text-align: center; white-space: nowrap;
+      box-shadow: 0 0 16px rgba(0,230,118,.3);
+      transition: left .4s cubic-bezier(.4,0,.2,1);
+      width: 120px;
+      margin-bottom: .5rem;
+    }
+
+    #polymerase::after {
+      content: '▼';
+      position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+      color: var(--accent-g); font-size: .6rem;
+    }
+
+    /* ===========================
+       BOTONES
+    =========================== */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.6rem; border-radius: 6px; border: none;
+      cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: .9rem;
+      transition: all .22s; position: relative; overflow: hidden;
+    }
+
+    .btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,.07); opacity: 0; transition: opacity .2s;
+    }
+
+    .btn:hover::after { opacity: 1; }
+    .btn:active { transform: scale(.97); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-g), #00c853);
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--accent-b), #0288d1);
+      color: #000;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff6f00, var(--accent-y));
+      color: #000;
+    }
+
+    /* ===========================
+       SECCIÓN TRADUCCIÓN
+    =========================== */
+    .ribosome-wrapper {
+      position: relative; overflow: hidden;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.2rem; margin-bottom: 1.4rem;
+      min-height: 160px;
+    }
+
+    /* Cinta de ARNm que corre */
+    #mrna-tape-container {
+      overflow: hidden; position: relative; height: 36px; margin-bottom: 1rem;
+    }
+
+    #mrna-tape {
+      display: flex; gap: 4px;
+      position: absolute; top: 2px; left: 0;
+      transition: transform .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Ribosoma */
+    #ribosome {
+      display: none;
+      width: 100px; height: 60px;
+      background: linear-gradient(160deg, #1e3a1e, #0a1e0a);
+      border: 2px solid var(--accent-g);
+      border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: .6rem; color: var(--accent-g);
+      box-shadow: 0 0 20px rgba(0,230,118,.25);
+      z-index: 2;
+    }
+
+    /* Cadena de aminoácidos */
+    #aminoacid-chain {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: .8rem; min-height: 44px;
+    }
+
+    .aminoacid {
+      padding: .3rem .6rem; border-radius: 20px;
+      font-family: var(--font-mono); font-size: .7rem; font-weight: 700;
+      opacity: 0; transform: scale(.5);
+      transition: opacity .4s, transform .4s;
+      border: 1px solid;
+    }
+
+    .aminoacid.visible { opacity: 1; transform: scale(1); }
+
+    .aa-colors { /* colores rotativos */ }
+
+    /* Proteína final */
+    #protein-display {
+      display: none;
+      background: linear-gradient(135deg, var(--card), #1a2010);
+      border: 2px solid var(--accent-y);
+      border-radius: 10px; padding: 1.2rem 1.5rem; margin-top: 1rem;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255,214,0,.2);
+      animation: proteinAppear .6s forwards;
+    }
+
+    @keyframes proteinAppear {
+      from { opacity: 0; transform: scale(.9) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    #protein-display .protein-icon { font-size: 2rem; margin-bottom: .4rem; }
+
+    #protein-display h3 {
+      font-family: var(--font-disp); font-size: 1.3rem;
+      color: var(--accent-y); letter-spacing: .06em;
+    }
+
+    #protein-display p { font-size: .82rem; color: #a0b4c8; margin-top: .3rem; }
+
+    /* ===========================
+       LEYENDA / CÓDIGO CODONES
+    =========================== */
+    .codon-table {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .6rem;
+      margin-top: 1rem;
+    }
+
+    .codon-entry {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: .5rem .7rem;
+      font-family: var(--font-mono); font-size: .72rem;
+      display: flex; flex-direction: column; gap: .2rem;
+    }
+
+    .codon-entry .codon { color: var(--accent-b); }
+    .codon-entry .aa-name { color: var(--accent-g); }
+
+    /* ===========================
+       POPUP MODAL
+    =========================== */
+    #modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+
+    #modal-overlay.active { display: flex; }
+
+    #modal-box {
+      background: var(--card); border: 1px solid var(--accent-y);
+      border-radius: 16px; padding: 2.5rem 2rem; max-width: 520px; width: 90%;
+      box-shadow: 0 0 60px rgba(255,214,0,.2);
+      animation: modalIn .4s cubic-bezier(.34,1.56,.64,1);
+      text-align: center;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(.7) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-emoji { font-size: 3rem; margin-bottom: 1rem; }
+
+    #modal-box h2 {
+      font-family: var(--font-disp); font-size: 1.8rem;
+      color: var(--accent-y); letter-spacing: .06em; margin-bottom: .8rem;
+    }
+
+    #modal-box p {
+      font-size: .92rem; color: #c0d0e0; line-height: 1.75;
+    }
+
+    #modal-box .player-stat {
+      margin-top: 1.2rem;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .8rem;
+    }
+
+    .stat-pill {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: .6rem .4rem; text-align: center;
+    }
+
+    .stat-pill .val {
+      font-family: var(--font-disp); font-size: 1.4rem; color: var(--accent-g);
+    }
+
+    .stat-pill .lbl { font-size: .68rem; color: var(--muted); }
+
+    #modal-close {
+      margin-top: 1.5rem;
+    }
+
+    /* ===========================
+       STATUS BAR
+    =========================== */
+    .status-bar {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: .6rem 1rem;
+      font-family: var(--font-mono); font-size: .75rem;
+      color: var(--accent-g); display: flex; align-items: center; gap: .6rem;
+      min-height: 38px;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent-g); flex-shrink: 0;
+    }
+
+    .status-dot.idle { background: var(--muted); }
+    .status-dot.active { animation: pulse 1s infinite; }
+
+    /* ===========================
+       ANIMACIONES GLOBALES
+    =========================== */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(1.3); }
+    }
+
+    @keyframes slideRight {
+      from { transform: translateX(-8px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .progress-fill {
+      height: 100%; border-radius: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--accent-g), var(--accent-b));
+      transition: width .4s;
+    }
+
+    /* ===========================
+       SECCIÓN 03 — PRUEBAS GENÉTICAS
+    =========================== */
+
+    /* Cuadrícula de 4 tarjetas */
+    .gene-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1.4rem;
+    }
+
+    @media (max-width: 680px) {
+      .gene-cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Tarjeta individual — efecto flip 3D */
+    .gene-card {
+      perspective: 900px;
+      height: 230px;
+      cursor: pointer;
+    }
+
+    .gene-card-inner {
+      position: relative; width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,0,.2,1);
+      border-radius: 10px;
+    }
+
+    /* Activar flip al hacer hover (desktop) */
+    .gene-card:hover .gene-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Activar flip con clase JS (táctil / clic) */
+    .gene-card.flipped .gene-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Cara frontal */
+    .gene-card-front,
+    .gene-card-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 10px;
+      padding: 1.4rem 1.2rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      border: 1px solid var(--border);
+    }
+
+    .gene-card-front {
+      background: var(--surface);
+    }
+
+    .gene-card-back {
+      background: var(--card);
+      transform: rotateY(180deg);
+      border-color: transparent; /* el borde del color del gen lo ponemos en JS */
+    }
+
+    /* Icono grande en la cara frontal */
+    .gene-card-front .gc-icon {
+      font-size: 2.2rem; line-height: 1;
+    }
+
+    .gene-card-front .gc-gene {
+      font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--muted); margin-top: .3rem;
+    }
+
+    .gene-card-front .gc-title {
+      font-family: var(--font-disp); font-size: 1.25rem; letter-spacing: .05em;
+      line-height: 1.1; margin-top: auto; padding-top: .6rem;
+    }
+
+    .gene-card-front .gc-hint {
+      font-size: .72rem; color: var(--muted); margin-top: .5rem;
+      display: flex; align-items: center; gap: .3rem;
+    }
+
+    /* Cara trasera */
+    .gene-card-back .gc-back-gene {
+      font-family: var(--font-mono); font-size: .65rem; letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: .5rem;
+    }
+
+    .gene-card-back .gc-variant {
+      display: flex; flex-direction: column; gap: .55rem; flex: 1;
+    }
+
+    .gc-variant-row {
+      background: var(--surface); border-radius: 6px;
+      padding: .5rem .7rem; border-left: 3px solid;
+    }
+
+    .gc-variant-row .vr-label {
+      font-family: var(--font-mono); font-size: .65rem; font-weight: 700;
+      letter-spacing: .08em; margin-bottom: .2rem;
+    }
+
+    .gc-variant-row .vr-desc {
+      font-size: .78rem; color: #a0b4c8; line-height: 1.5;
+    }
+
+    .gene-card-back .gc-back-footer {
+      font-size: .68rem; color: var(--muted); margin-top: .6rem;
+      border-top: 1px solid var(--border); padding-top: .5rem;
+      font-style: italic;
+    }
+
+    /* Colores por gen (se aplican vía style inline en el HTML) */
+
+    /* Pista "haz clic" flotante */
+    .flip-hint-bar {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: var(--font-mono); font-size: .65rem;
+      color: var(--muted); margin-bottom: .6rem; flex-wrap: wrap;
+    }
+
+    .flip-hint-bar span { color: var(--accent-b); }
+
+    /* ===========================
+       RESPONSIVE
+    =========================== */
+    @media (max-width: 500px) {
+      .section-header { flex-direction: column; align-items: flex-start; gap: .4rem; }
+      .strand .base { width: 22px; height: 22px; font-size: .62rem; }
+      .bonds .bond { width: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================
+     HEADER
+============================================== -->
+<header>
+  <div>
+    <span class="header-badge">Simulador Educativo · Biología Celular</span>
+  </div>
+  <div class="header-titles">
+    <h1>ADN &amp; RENDIMIENTO DEPORTIVO</h1>
+    <p class="subtitle">La genética del futbolista — Caso de estudio: gen ACTN3</p>
+  </div>
+  <div class="haaland-chip">
+    <span class="dot"></span>
+    <span>Erling Haaland · Caso de estudio</span>
+  </div>
+</header>
+
+<!-- =============================================
+     MAIN
+============================================== -->
+<main>
+
+  <!-- INTRO -->
+  <div class="intro-card">
+    <div>
+      <h2>¿Por qué Haaland es tan explosivo?</h2>
+      <p>
+        La velocidad, la potencia y la fuerza explosiva de un futbolista de élite no se forjan
+        solo en el entrenamiento. El gen <strong style="color:var(--accent-g)">ACTN3</strong>
+        codifica la proteína alfa-actinina-3, exclusiva de las fibras musculares de
+        <em>contracción rápida</em> (tipo II). Variantes específicas de este gen están
+        sobre-representadas en sprinters y deportistas de potencia. Simula aquí cómo una
+        célula muscular de Haaland fabrica esa proteína.
+      </p>
+    </div>
+    <div>
+      <div class="gene-info">
+        <div class="label">🧬 Segmento gen ACTN3 (simplificado)</div>
+        <div class="sequence" id="dna-display-intro">
+          <!-- Se genera con JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================
+       PASO 1: TRANSCRIPCIÓN
+  ======================================== -->
+  <section class="section-card" id="section-transcripcion">
+    <div class="section-header">
+      <span class="step-badge">01</span>
+      <div>
+        <h2>Transcripción</h2>
+        <p>La ARN Polimerasa lee la cadena molde de ADN y sintetiza una cadena de ARNm</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- Barra de estado -->
+      <div class="status-bar" id="status-transcripcion">
+        <span class="status-dot idle" id="dot-t"></span>
+        <span id="status-t-text">Esperando inicio de transcripción...</span>
+      </div>
+
+      <div style="margin: 1rem 0;">
+        <div class="progress-wrap"><div class="progress-fill" id="prog-t"></div></div>
+      </div>
+
+      <!-- Cadena de ADN -->
+      <div class="dna-container">
+        <!-- Polimerasa (posicionable) -->
+        <div id="polymerase">ARN Polimerasa</div>
+
+        <div class="dna-strand-label">5' → Cadena molde de ADN (3'→5')</div>
+        <div class="strand" id="strand-template"></div>
+
+        <div class="bonds" id="bonds-row"></div>
+
+        <div class="dna-strand-label">3' → Cadena codificante (5'→3')</div>
+        <div class="strand" id="strand-coding"></div>
+
+        <div style="height:12px;border-left:2px dashed var(--border);margin-left:14px;margin-top:4px;"></div>
+
+        <div class="dna-strand-label" style="color:var(--accent-b);">→ ARNm sintetizado (5'→3')</div>
+        <div id="mrna-track" class="strand"></div>
+      </div>
+
+      <!-- Controles -->
+      <div style="display:flex; gap:.8rem; flex-wrap:wrap;">
+        <button class="btn btn-primary" id="btn-transcripcion" onclick="iniciarTranscripcion()">
+          ▶ Iniciar Transcripción
+        </button>
+        <button class="btn" style="background:var(--surface);border:1px solid var(--border);color:var(--text);"
+          onclick="resetTranscripcion()">↺ Reiniciar</button>
+      </div>
+
+      <!-- Leyenda -->
+      <div style="margin-top:1.2rem; display:flex; gap:.8rem; flex-wrap:wrap; align-items:center;">
+        <span style="font-size:.75rem; color:var(--muted); font-family:var(--font-mono);">Regla:</span>
+        <span style="font-size:.78rem;">A → <span class="b-U">U</span></span>
+        <span style="font-size:.78rem;">T → <span class="b-A">A</span></span>
+        <span style="font-size:.78rem;">C → <span class="b-G">G</span></span>
+        <span style="font-size:.78rem;">G → <span class="b-C">C</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================
+       PASO 2: TRADUCCIÓN
+  ======================================== -->
+  <section class="section-card" id="section-traduccion">
+    <div class="section-header">
+      <span class="step-badge" style="background:linear-gradient(135deg,var(--accent-b),var(--accent-y));-webkit-background-clip:text;background-clip:text;">02</span>
+      <div>
+        <h2>Traducción</h2>
+        <p>El ribosoma lee el ARNm en tripletes (codones) y ensambla aminoácidos</p>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="status-bar" id="status-traduccion">
+        <span class="status-dot idle" id="dot-tr"></span>
+        <span id="status-tr-text">Completa la transcripción primero...</span>
+      </div>
+
+      <div style="margin: 1rem 0;">
+        <div class="progress-wrap"><div class="progress-fill" id="prog-tr" style="background:linear-gradient(90deg,var(--accent-b),var(--accent-y));"></div></div>
+      </div>
+
+      <!-- Ribosoma + cinta ARNm -->
+      <div class="ribosome-wrapper">
+        <div id="ribosome">Ribosoma</div>
+        <div id="mrna-tape-container">
+          <div id="mrna-tape"></div>
+        </div>
+        <!-- Cadena de aminoácidos en construcción -->
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--muted);margin-bottom:.4rem;">
+          Cadena polipeptídica en crecimiento:
+        </div>
+        <div id="aminoacid-chain"></div>
+      </div>
+
+      <!-- Proteína final -->
+      <div id="protein-display">
+        <div class="protein-icon">⚡</div>
+        <h3>Proteína muscular ACTN3</h3>
+        <p>alfa-actinina-3 · Fibras tipo II · Contracción rápida</p>
+      </div>
+
+      <!-- Controles -->
+      <div style="display:flex; gap:.8rem; flex-wrap:wrap; margin-top:1rem;">
+        <button class="btn btn-secondary" id="btn-traduccion" onclick="iniciarTraduccion()" disabled>
+          ▶ Iniciar Traducción
+        </button>
+        <button class="btn" style="background:var(--surface);border:1px solid var(--border);color:var(--text);"
+          onclick="resetTraduccion()" id="btn-reset-tr">↺ Reiniciar</button>
+      </div>
+
+      <!-- Tabla de codones (muestra) -->
+      <div style="margin-top:1.5rem;">
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.6rem;">
+          CODONES USADOS EN ESTA SIMULACIÓN
+        </div>
+        <div class="codon-table" id="codon-table"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =======================================
+       PASO 3: PRUEBAS GENÉTICAS DEPORTIVAS
+  ======================================== -->
+  <section class="section-card" id="section-pruebas">
+    <div class="section-header">
+      <!-- Badge con gradiente distinto para diferenciarlo visualmente -->
+      <span class="step-badge"
+        style="background:linear-gradient(135deg,var(--accent-r),var(--accent-y));
+               -webkit-background-clip:text;background-clip:text;">03</span>
+      <div>
+        <h2>Pruebas Genéticas Deportivas</h2>
+        <p>¿En qué deporte puedes destacar según tu ADN?</p>
+      </div>
+    </div>
+
+    <div class="section-body">
+
+      <!-- Texto introductorio -->
+      <p style="font-size:.9rem;color:#a0b4c8;line-height:1.75;margin-bottom:1rem;">
+        Más allá del gen <strong style="color:var(--accent-g)">ACTN3</strong>, existen varios
+        marcadores genéticos que los laboratorios deportivos analizan para orientar el
+        entrenamiento de élite. Explora cada gen pasando el cursor sobre las tarjetas
+        (o tócalas en móvil) para descubrir qué variante favorece cada disciplina.
+      </p>
+
+      <!-- Pista de interacción -->
+      <div class="flip-hint-bar">
+        <span>🖱</span> Pasa el cursor sobre cada tarjeta — o tócala — para revelar la información
+        &nbsp;·&nbsp; <span>↩</span> Vuelve a tocarla para girar de regreso
+      </div>
+
+      <!-- ==========================================
+           CUADRÍCULA DE 4 TARJETAS FLIP
+      =========================================== -->
+      <div class="gene-cards-grid">
+
+        <!-- TARJETA 1 — ACTN3 -->
+        <div class="gene-card" onclick="toggleFlip(this)" aria-label="Gen ACTN3">
+          <div class="gene-card-inner">
+            <!-- FRENTE -->
+            <div class="gene-card-front">
+              <div>
+                <div class="gc-icon">⚡</div>
+                <div class="gc-gene">Gen ACTN3 · Cromosoma 11</div>
+              </div>
+              <div>
+                <div class="gc-title" style="color:var(--accent-g);">Potencia &amp;<br>Velocidad Explosiva</div>
+                <div class="gc-hint">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>
+                  </svg>
+                  Gira para ver variantes
+                </div>
+              </div>
+            </div>
+            <!-- REVERSO -->
+            <div class="gene-card-back" style="border-color:var(--accent-g);">
+              <div class="gc-back-gene" style="color:var(--accent-g);">ACTN3 — alfa-actinina-3</div>
+              <div class="gc-variant">
+                <div class="gc-variant-row" style="border-color:var(--accent-g);">
+                  <div class="vr-label" style="color:var(--accent-g);">Variante RR — Potencia</div>
+                  <div class="vr-desc">
+                    Produce alfa-actinina-3 funcional. Fibras tipo II activas.
+                    Perfil ideal para fútbol, sprint de 100 m, salto y deportes de contacto.
+                    <em>Ejemplo: Erling Haaland</em>.
+                  </div>
+                </div>
+                <div class="gc-variant-row" style="border-color:var(--dna-t);">
+                  <div class="vr-label" style="color:var(--dna-t);">Variante XX — Resistencia</div>
+                  <div class="vr-desc">
+                    La proteína ACTN3 no se expresa. Mayor eficiencia metabólica aeróbica.
+                    Ventaja en ultra-maratón, triatlón y ciclismo de montaña.
+                  </div>
+                </div>
+              </div>
+              <div class="gc-back-footer">Prueba disponible en kits de ADN deportivo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA 2 — ACE -->
+        <div class="gene-card" onclick="toggleFlip(this)" aria-label="Gen ACE">
+          <div class="gene-card-inner">
+            <!-- FRENTE -->
+            <div class="gene-card-front">
+              <div>
+                <div class="gc-icon">🫀</div>
+                <div class="gc-gene">Gen ACE · Cromosoma 17</div>
+              </div>
+              <div>
+                <div class="gc-title" style="color:var(--accent-b);">Rendimiento<br>Cardiovascular</div>
+                <div class="gc-hint">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>
+                  </svg>
+                  Gira para ver variantes
+                </div>
+              </div>
+            </div>
+            <!-- REVERSO -->
+            <div class="gene-card-back" style="border-color:var(--accent-b);">
+              <div class="gc-back-gene" style="color:var(--accent-b);">ACE — Enzima Convertidora de Angiotensina</div>
+              <div class="gc-variant">
+                <div class="gc-variant-row" style="border-color:var(--accent-b);">
+                  <div class="vr-label" style="color:var(--accent-b);">Variante I — Aeróbico</div>
+                  <div class="vr-desc">
+                    Niveles bajos de la enzima ACE. Mayor eficiencia en el transporte de oxígeno.
+                    Rendimiento óptimo en maratón, ciclismo de ruta y natación de fondo.
+                  </div>
+                </div>
+                <div class="gc-variant-row" style="border-color:var(--accent-r);">
+                  <div class="vr-label" style="color:var(--accent-r);">Variante D — Fuerza</div>
+                  <div class="vr-desc">
+                    Niveles elevados de ACE, mayor hipertrofia muscular y capacidad anaeróbica.
+                    Ventaja en halterofilia, remo de sprint y deportes de potencia.
+                  </div>
+                </div>
+              </div>
+              <div class="gc-back-footer">Regula presión arterial y adaptación al ejercicio</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA 3 — PPAR-alfa -->
+        <div class="gene-card" onclick="toggleFlip(this)" aria-label="Gen PPAR-alfa">
+          <div class="gene-card-inner">
+            <!-- FRENTE -->
+            <div class="gene-card-front">
+              <div>
+                <div class="gc-icon">🔥</div>
+                <div class="gc-gene">Gen PPARA · Cromosoma 22</div>
+              </div>
+              <div>
+                <div class="gc-title" style="color:var(--accent-y);">Metabolismo<br>de Grasas</div>
+                <div class="gc-hint">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>
+                  </svg>
+                  Gira para ver variantes
+                </div>
+              </div>
+            </div>
+            <!-- REVERSO -->
+            <div class="gene-card-back" style="border-color:var(--accent-y);">
+              <div class="gc-back-gene" style="color:var(--accent-y);">PPAR-α — Receptor Activado por Proliferadores de Peroxisoma</div>
+              <div class="gc-variant">
+                <div class="gc-variant-row" style="border-color:var(--accent-y);">
+                  <div class="vr-label" style="color:var(--accent-y);">Alelo G — Eficiencia Lipídica</div>
+                  <div class="vr-desc">
+                    Regula la oxidación de ácidos grasos en la mitocondria. Variantes con mayor
+                    expresión del gen permiten usar grasas como combustible de forma más eficiente:
+                    ventaja clara en atletismo de fondo y triatlón Ironman.
+                  </div>
+                </div>
+                <div class="gc-variant-row" style="border-color:var(--muted);">
+                  <div class="vr-label" style="color:var(--muted);">Alelo C — Metabolismo mixto</div>
+                  <div class="vr-desc">
+                    Menor tasa de oxidación lipídica en reposo. Requiere mayor dependencia
+                    de glucógeno; se adapta bien a deportes de duración media (ciclismo de pista).
+                  </div>
+                </div>
+              </div>
+              <div class="gc-back-footer">Clave en la dieta y la periodización del entrenamiento</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA 4 — COL1A1 / COL5A1 -->
+        <div class="gene-card" onclick="toggleFlip(this)" aria-label="Genes COL1A1 y COL5A1">
+          <div class="gene-card-inner">
+            <!-- FRENTE -->
+            <div class="gene-card-front">
+              <div>
+                <div class="gc-icon">🦴</div>
+                <div class="gc-gene">COL1A1 · COL5A1 — Colágeno</div>
+              </div>
+              <div>
+                <div class="gc-title" style="color:var(--accent-r);">Riesgo de Lesión<br>en Tejido Conectivo</div>
+                <div class="gc-hint">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>
+                  </svg>
+                  Gira para ver variantes
+                </div>
+              </div>
+            </div>
+            <!-- REVERSO -->
+            <div class="gene-card-back" style="border-color:var(--accent-r);">
+              <div class="gc-back-gene" style="color:var(--accent-r);">COL1A1 / COL5A1 — Colágeno tipo I y V</div>
+              <div class="gc-variant">
+                <div class="gc-variant-row" style="border-color:var(--accent-g);">
+                  <div class="vr-label" style="color:var(--accent-g);">Variante protectora (TT / CC)</div>
+                  <div class="vr-desc">
+                    Tendones y ligamentos con mayor densidad y rigidez de colágeno.
+                    Menor riesgo de rotura del LCA, tendinitis de Aquiles y esguinces crónicos.
+                    Permite alta intensidad en deportes de contacto y cambios de dirección.
+                  </div>
+                </div>
+                <div class="gc-variant-row" style="border-color:var(--accent-r);">
+                  <div class="vr-label" style="color:var(--accent-r);">Variante de riesgo (ss / TT)</div>
+                  <div class="vr-desc">
+                    Colágeno más laxo y elástico. Mayor riesgo lesional ante cargas repetitivas.
+                    Requiere protocolos preventivos, periodización conservadora y refuerzo propioceptivo.
+                  </div>
+                </div>
+              </div>
+              <div class="gc-back-footer">Vital para adaptar intensidad en deportes de contacto</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /gene-cards-grid -->
+
+      <!-- Nota científica al pie -->
+      <div style="
+        margin-top:1.5rem;
+        background:var(--surface);border:1px solid var(--border);
+        border-radius:8px;padding:1rem 1.2rem;
+        display:flex;gap:.8rem;align-items:flex-start;">
+        <span style="font-size:1.2rem;flex-shrink:0;">🔬</span>
+        <p style="font-size:.82rem;color:#7a9ab5;line-height:1.7;">
+          <strong style="color:var(--text);">Nota científica:</strong>
+          Ningún gen actúa de forma aislada. El rendimiento deportivo es un rasgo
+          <em>poligénico y multifactorial</em>: intervienen cientos de variantes génicas junto a
+          factores epigenéticos, el entrenamiento, la nutrición y el contexto psicosocial.
+          Las pruebas genéticas deportivas son una herramienta orientativa, no determinista.
+        </p>
+      </div>
+
+    </div><!-- /section-body -->
+  </section>
+
+</main>
+
+<!-- =============================================
+     MODAL FINAL
+============================================== -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div class="modal-emoji">⚽🧬💪</div>
+    <h2>¡Proteína Sintetizada!</h2>
+    <p>
+      Esta proteína es fundamental para las fibras musculares de
+      <strong style="color:var(--accent-y)">contracción rápida</strong>, otorgando a
+      deportistas como <strong style="color:var(--accent-g)">Erling Haaland</strong>
+      su característica fuerza explosiva y velocidad en la cancha.
+      La alfa-actinina-3 (ACTN3) actúa como andamio estructural en las
+      miofibrillas, permitiendo contracciones musculares de alta potencia y frecuencia.
+    </p>
+    <div class="player-stat">
+      <div class="stat-pill">
+        <div class="val">36.4</div>
+        <div class="lbl">km/h velocidad</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val">194</div>
+        <div class="lbl">cm altura</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val">ACTN3</div>
+        <div class="lbl">Genotipo RR</div>
+      </div>
+    </div>
+    <button class="btn btn-danger" id="modal-close" onclick="cerrarModal()" style="margin-top:1.5rem;">
+      ✓ Entendido — ¡Increíble!
+    </button>
+  </div>
+</div>
+
+<!-- =============================================
+     JAVASCRIPT
+============================================== -->
+<script>
+/* ============================================
+   DATOS: Secuencia ADN simplificada del ACTN3
+   (16 bases para la simulación visual)
+============================================ */
+const TEMPLATE_STRAND = ['T','A','C','G','T','A','C','G','A','T','G','C','T','A','C','G'];
+// La cadena codificante es el complemento de la molde
+const complement = { A:'T', T:'A', C:'G', G:'C' };
+const rnaComplement = { A:'U', T:'A', C:'G', G:'C' }; // molde → ARNm
+
+// ARNm resultante de la transcripción (se calcula dinámicamente)
+let mrnaSequence = [];
+
+// Codones y aminoácidos para la traducción
+const CODONS = [
+  { codon: 'UAC', aa: 'Tyr', color: '#e91e63' },
+  { codon: 'GUA', aa: 'Val', color: '#ff9800' },
+  { codon: 'CGU', aa: 'Arg', color: '#00bcd4' },
+  { codon: 'ACG', aa: 'Thr', color: '#8bc34a' },
+  { codon: 'AUG', aa: 'Met', color: '#9c27b0' },
+];
+
+/* ============================================
+   INIT: Renderizar cadenas de ADN
+============================================ */
+function initDNA() {
+  const codingStrand = TEMPLATE_STRAND.map(b => complement[b]);
+
+  // Header de intro: mostrar secuencia
+  const introEl = document.getElementById('dna-display-intro');
+  introEl.innerHTML =
+    '5\'-' + TEMPLATE_STRAND.map(b => `<span class="b-${b}">${b}</span>`).join('-') + '-3\'' +
+    '<br>' +
+    '   ' + TEMPLATE_STRAND.map(() => '|').join(' ') + '<br>' +
+    '3\'-' + codingStrand.map(b => `<span class="b-${b}">${b}</span>`).join('-') + '-5\'';
+
+  // Cadena molde (template)
+  const tEl = document.getElementById('strand-template');
+  tEl.innerHTML = '';
+  TEMPLATE_STRAND.forEach((b, i) => {
+    const div = document.createElement('div');
+    div.className = `base ${b}`;
+    div.id = `tmpl-${i}`;
+    div.textContent = b;
+    tEl.appendChild(div);
+  });
+
+  // Cadena codificante
+  const cEl = document.getElementById('strand-coding');
+  cEl.innerHTML = '';
+  codingStrand.forEach((b, i) => {
+    const div = document.createElement('div');
+    div.className = `base ${b}`;
+    div.id = `code-${i}`;
+    div.textContent = b;
+    cEl.appendChild(div);
+  });
+
+  // Puentes de hidrógeno
+  const bEl = document.getElementById('bonds-row');
+  bEl.innerHTML = '';
+  TEMPLATE_STRAND.forEach((_, i) => {
+    const span = document.createElement('span');
+    span.className = 'bond';
+    span.id = `bond-${i}`;
+    span.textContent = '|';
+    bEl.appendChild(span);
+  });
+
+  // Track ARNm (vacío al inicio)
+  document.getElementById('mrna-track').innerHTML = '';
+
+  // Tabla de codones
+  initCodonTable();
+}
+
+function initCodonTable() {
+  const el = document.getElementById('codon-table');
+  el.innerHTML = '';
+  CODONS.forEach(c => {
+    el.innerHTML += `
+      <div class="codon-entry">
+        <span class="codon">${c.codon}</span>
+        <span class="aa-name">${c.aa}</span>
+      </div>`;
+  });
+}
+
+/* ============================================
+   TRANSCRIPCIÓN
+============================================ */
+let transcripcionActiva = false;
+let transcripcionCompleta = false;
+
+async function iniciarTranscripcion() {
+  if (transcripcionActiva || transcripcionCompleta) return;
+  transcripcionActiva = true;
+  document.getElementById('btn-transcripcion').disabled = true;
+
+  // Mostrar polimerasa
+  const poly = document.getElementById('polymerase');
+  poly.style.display = 'block';
+
+  setStatus('t', 'active', 'ARN Polimerasa iniciando lectura del promotor...');
+
+  const track = document.getElementById('mrna-track');
+  track.innerHTML = '';
+  mrnaSequence = [];
+
+  for (let i = 0; i < TEMPLATE_STRAND.length; i++) {
+    // Mover polimerasa
+    const baseEl = document.getElementById(`tmpl-${i}`);
+    const containerRect = document.getElementById('strand-template').getBoundingClientRect();
+    const baseRect = baseEl.getBoundingClientRect();
+    const offset = baseRect.left - containerRect.left;
+
+    // Highlight base template
+    baseEl.classList.add('highlight');
+    const bondEl = document.getElementById(`bond-${i}`);
+    bondEl.classList.add('active');
+
+    // Calcular ARNm base
+    const rnaBase = rnaComplement[TEMPLATE_STRAND[i]];
+    mrnaSequence.push(rnaBase);
+
+    // Crear base en el track
+    const baseDiv = document.createElement('div');
+    baseDiv.className = `base ${rnaBase}`;
+    baseDiv.textContent = rnaBase;
+    track.appendChild(baseDiv);
+
+    // Trigger animación
+    requestAnimationFrame(() => baseDiv.classList.add('appear'));
+
+    // Actualizar progreso
+    const pct = ((i + 1) / TEMPLATE_STRAND.length * 100).toFixed(0);
+    document.getElementById('prog-t').style.width = pct + '%';
+    setStatus('t', 'active', `Transcribiendo base ${i + 1}/${TEMPLATE_STRAND.length}: ${TEMPLATE_STRAND[i]} → ${rnaBase}`);
+
+    await sleep(400);
+
+    // Des-highlight
+    baseEl.classList.remove('highlight');
+  }
+
+  // Ocultar polimerasa
+  poly.style.display = 'none';
+
+  setStatus('t', 'idle', `✓ Transcripción completa. ARNm: 5'-${mrnaSequence.join('-')}-3'`);
+  transcripcionActiva = false;
+  transcripcionCompleta = true;
+
+  // Habilitar traducción
+  document.getElementById('btn-traduccion').disabled = false;
+  setStatus('tr', 'idle', 'ARNm listo — puedes iniciar la Traducción.');
+  buildMrnaTape();
+}
+
+function resetTranscripcion() {
+  transcripcionActiva = false;
+  transcripcionCompleta = false;
+  mrnaSequence = [];
+  document.getElementById('btn-transcripcion').disabled = false;
+  document.getElementById('btn-traduccion').disabled = true;
+  document.getElementById('polymerase').style.display = 'none';
+  document.getElementById('mrna-track').innerHTML = '';
+  document.getElementById('prog-t').style.width = '0%';
+
+  // Reset highlights
+  TEMPLATE_STRAND.forEach((_, i) => {
+    document.getElementById(`tmpl-${i}`)?.classList.remove('highlight');
+    document.getElementById(`bond-${i}`)?.classList.remove('active');
+  });
+
+  setStatus('t', 'idle', 'Esperando inicio de transcripción...');
+  setStatus('tr', 'idle', 'Completa la transcripción primero...');
+
+  resetTraduccion(true);
+}
+
+/* ============================================
+   TRADUCCIÓN
+============================================ */
+let traduccionActiva = false;
+
+function buildMrnaTape() {
+  const tape = document.getElementById('mrna-tape');
+  tape.innerHTML = '';
+  mrnaSequence.forEach((b, i) => {
+    const div = document.createElement('div');
+    div.className = `base ${b}`;
+    div.textContent = b;
+    div.id = `tape-${i}`;
+    tape.appendChild(div);
+  });
+}
+
+async function iniciarTraduccion() {
+  if (traduccionActiva || !transcripcionCompleta) return;
+  traduccionActiva = true;
+  document.getElementById('btn-traduccion').disabled = true;
+  document.getElementById('protein-display').style.display = 'none';
+  document.getElementById('aminoacid-chain').innerHTML = '';
+  document.getElementById('prog-tr').style.width = '0%';
+
+  const ribosome = document.getElementById('ribosome');
+  ribosome.style.display = 'flex';
+
+  setStatus('tr', 'active', 'Ribosoma ensamblado. Buscando codón de inicio AUG...');
+
+  // Mover cinta ARNm a través del ribosoma, en codones de 3
+  const tape = document.getElementById('mrna-tape');
+  const bases = tape.querySelectorAll('.base');
+
+  // El número de codones posibles
+  const numCodons = Math.floor(mrnaSequence.length / 3);
+
+  for (let c = 0; c < numCodons; c++) {
+    const codonBases = mrnaSequence.slice(c * 3, c * 3 + 3).join('');
+
+    // Mover cinta
+    const shift = c * (28 + 4); // base width + gap
+    tape.style.transform = `translateX(-${shift}px)`;
+
+    // Highlight codón actual
+    for (let j = 0; j < 3; j++) {
+      bases[c * 3 + j]?.classList.add('highlight');
+    }
+
+    setStatus('tr', 'active', `Leyendo codón ${c + 1}: ${codonBases}`);
+
+    await sleep(600);
+
+    // Buscar aminoácido
+    const codonData = CODONS[c % CODONS.length]; // cicla si hay más codones que AA definidos
+
+    // Añadir aminoácido
+    const aaEl = document.createElement('span');
+    aaEl.className = 'aminoacid';
+    aaEl.textContent = codonData.aa;
+    aaEl.style.background = codonData.color + '22';
+    aaEl.style.borderColor = codonData.color;
+    aaEl.style.color = codonData.color;
+    document.getElementById('aminoacid-chain').appendChild(aaEl);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => aaEl.classList.add('visible'));
+    });
+
+    // Actualizar progreso
+    const pct = ((c + 1) / numCodons * 100).toFixed(0);
+    document.getElementById('prog-tr').style.width = pct + '%';
+
+    // Quitar highlight
+    for (let j = 0; j < 3; j++) {
+      bases[c * 3 + j]?.classList.remove('highlight');
+    }
+
+    await sleep(300);
+  }
+
+  // Proteína completa
+  ribosome.style.display = 'none';
+  document.getElementById('protein-display').style.display = 'block';
+  setStatus('tr', 'idle', '✓ ¡Síntesis proteica completa! Proteína ACTN3 liberada.');
+
+  await sleep(800);
+  mostrarModal();
+
+  traduccionActiva = false;
+}
+
+function resetTraduccion(silencioso = false) {
+  traduccionActiva = false;
+  document.getElementById('aminoacid-chain').innerHTML = '';
+  document.getElementById('protein-display').style.display = 'none';
+  document.getElementById('ribosome').style.display = 'none';
+  document.getElementById('prog-tr').style.width = '0%';
+  const tape = document.getElementById('mrna-tape');
+  if (tape) tape.style.transform = 'translateX(0)';
+  if (!silencioso) {
+    document.getElementById('btn-traduccion').disabled = !transcripcionCompleta;
+    setStatus('tr', transcripcionCompleta ? 'idle' : 'idle',
+      transcripcionCompleta ? 'ARNm listo — puedes iniciar la Traducción.' : 'Completa la transcripción primero...');
+  }
+}
+
+/* ============================================
+   MODAL
+============================================ */
+function mostrarModal() {
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+function cerrarModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+/* ============================================
+   HELPERS
+============================================ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function setStatus(section, state, text) {
+  const dotId = section === 't' ? 'dot-t' : 'dot-tr';
+  const textId = section === 't' ? 'status-t-text' : 'status-tr-text';
+  const dot = document.getElementById(dotId);
+  dot.className = 'status-dot' + (state === 'active' ? ' active' : ' idle');
+  if (state === 'active') dot.style.background = 'var(--accent-g)';
+  else dot.style.background = 'var(--muted)';
+  document.getElementById(textId).textContent = text;
+}
+
+/* ============================================
+   SECCIÓN 03 — FLIP DE TARJETAS (táctil/clic)
+   El hover se maneja en CSS; el clic alterna la
+   clase .flipped para soporte en dispositivos táctiles.
+============================================ */
+function toggleFlip(card) {
+  card.classList.toggle('flipped');
+}
+
+/* ============================================
+   ARRANQUE
+============================================ */
+window.addEventListener('DOMContentLoaded', initDNA);
+</script>
+</body>
+</html>
